@@ -24,6 +24,9 @@ import tempfile
 import warnings
 from pathlib import Path
 
+# Auto-accept Coqui TTS Terms of Service (required for non-interactive environments)
+os.environ["COQUI_TOS_AGREED"] = "1"
+
 import streamlit as st
 import torch
 from deep_translator import GoogleTranslator
