@@ -1,0 +1,23 @@
+# Open Source AI Voice Translator - Dependencies
+# ==============================================
+
+# Web Interface
+streamlit>=1.28.0
+
+# Transcription (ASR)
+faster-whisper>=0.10.0
+
+# Translation
+deep-translator>=1.11.4
+
+# Text-to-Speech with Voice Cloning
+TTS>=0.22.0
+
+# PyTorch (CPU version - replace with CUDA version if you have GPU)
+# For CUDA: pip install torch --index-url https://download.pytorch.org/whl/cu118
+torch>=2.0.0
+
+# Audio processing (dependency of TTS)
+numpy>=1.23.0
+scipy>=1.10.0
+
