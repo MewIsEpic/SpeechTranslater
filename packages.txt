@@ -1,4 +1,6 @@
 libsndfile1
+libsndfile1-dev
 ffmpeg
 espeak-ng
-
+build-essential
+python3-dev
