@@ -11,13 +11,14 @@ faster-whisper>=0.10.0
 deep-translator>=1.11.4
 
 # Text-to-Speech with Voice Cloning
-TTS>=0.22.0
+# Using specific version that has pre-built wheels
+TTS==0.22.0
 
-# PyTorch (CPU version - replace with CUDA version if you have GPU)
-# For CUDA: pip install torch --index-url https://download.pytorch.org/whl/cu118
+# PyTorch CPU (for cloud deployment)
+--extra-index-url https://download.pytorch.org/whl/cpu
 torch>=2.0.0
+torchaudio>=2.0.0
 
-# Audio processing (dependency of TTS)
-numpy>=1.23.0
+# Audio processing
+numpy<2.0.0
 scipy>=1.10.0
-
