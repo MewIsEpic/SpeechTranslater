@@ -279,30 +279,43 @@ def main():
         st.audio(uploaded_file, format=f"audio/{Path(uploaded_file.name).suffix[1:]}")
         
         # -----------------------------------------------------------------
-        # STEP 3: Transcription
+        # STEP 3: Transcription (Editable)
         # -----------------------------------------------------------------
-        st.markdown("### 📝 Step 3: Turkish Transcription")
+        st.markdown("### 📝 Step 3: Turkish Transcription (Editable)")
         
-        with st.spinner("Loading transcription model..."):
-            whisper_model = load_whisper_model()
-        
-        with st.spinner("Transcribing Turkish audio..."):
-            try:
-                detected_lang, transcription = transcribe_audio(audio_path, whisper_model)
-                
-                # Store in session state
-                st.session_state["transcription"] = transcription
-                
-                # Display results
-                st.info(f"**🇹🇷 Turkish Transcription:** {transcription}")
-                
-                # Warn if not Turkish
-                if detected_lang != "tr":
-                    st.warning(f"⚠️ Detected language: {detected_lang.upper()}. This app is optimized for Turkish input.")
+        # Only transcribe if we don't have a transcription yet or file changed
+        if "transcription" not in st.session_state or st.session_state.get("last_file") != uploaded_file.name:
+            with st.spinner("Loading transcription model..."):
+                whisper_model = load_whisper_model()
+            
+            with st.spinner("Transcribing Turkish audio..."):
+                try:
+                    detected_lang, transcription = transcribe_audio(audio_path, whisper_model)
                     
-            except Exception as e:
-                st.error(f"❌ Transcription error: {str(e)}")
-                return
+                    # Store in session state
+                    st.session_state["transcription"] = transcription
+                    st.session_state["last_file"] = uploaded_file.name
+                    
+                    # Warn if not Turkish
+                    if detected_lang != "tr":
+                        st.warning(f"Detected language: {detected_lang.upper()}. This app is optimized for Turkish input.")
+                        
+                except Exception as e:
+                    st.error(f"Transcription error: {str(e)}")
+                    return
+        
+        # Editable text area for transcription correction
+        st.caption("Review and edit the transcription if needed:")
+        edited_transcription = st.text_area(
+            "Turkish Text",
+            value=st.session_state.get("transcription", ""),
+            height=100,
+            key="edited_transcription",
+            help="Edit the transcription to correct any mistakes before translating"
+        )
+        
+        # Update session state with edited version
+        st.session_state["final_transcription"] = edited_transcription
         
         # -----------------------------------------------------------------
         # STEP 4: Translate & Generate
@@ -317,11 +330,12 @@ def main():
         
         if translate_button:
             # Check if we have required data
-            if "transcription" not in st.session_state:
-                st.error("❌ Please wait for transcription to complete")
+            if "final_transcription" not in st.session_state or not st.session_state["final_transcription"].strip():
+                st.error("Please wait for transcription or enter text manually")
                 return
                 
-            transcription = st.session_state["transcription"]
+            # Use the edited transcription
+            transcription = st.session_state["final_transcription"]
             audio_path = st.session_state["audio_path"]
             
             # Translation step
