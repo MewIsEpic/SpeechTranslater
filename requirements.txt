@@ -16,10 +16,11 @@ TTS==0.22.0
 # Transformers (pinned for TTS compatibility)
 transformers==4.36.0
 
-# PyTorch CPU
+# PyTorch (pinned for TTS compatibility - DO NOT upgrade past 2.5)
 torch==2.1.0
 torchaudio==2.1.0
 
 # Core dependencies
 numpy==1.26.4
 scipy==1.11.4
+networkx==2.8.8
